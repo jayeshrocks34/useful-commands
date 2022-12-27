@@ -1,0 +1,74 @@
+Install git
+
+--> sudo apt-get install git
+--> git --versions
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Install Java
+
+sudo apt install default-jdk
+sudo apt install default-jre
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Install jenkins
+
+--> sudo curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo tee /usr/share/keyrings/jenkins-keyring.asc &gt; /dev/null
+--> sudo echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list &gt; /dev/null
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Install docker
+
+--> sudo apt-get install docker.io - To install docker
+--> sudo usermod -a -G docker ubuntu - Give the permission to add a limited Linux user account to the "docker" group by using below command
+--> sudo service docker start - Start docker service by using below command
+--> sudo systemctl enable docker - Run below command to get docker service up automatically after reboot:
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Install Docker Compose
+--> sudo curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose 
+      (Download the latest version of Docker Compose)
+--> sudo chmod +x /usr/local/bin/docker-compose - Apply executable permissions to the binary
+--> sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose - Create a symbolic link
+--> sudo docker-compose -–version - Check installed docker-compose version
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Creating WordPress setup for Docker images with help of YAML scripting
+
+version: '3.3'
+services:
+  db:
+    image: mysql:8.0.19
+    command: '--default-authentication-plugin=mysql_native_password'
+    restart: always
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=somewordpress
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=wordpress
+      - MYSQL_PASSWORD=wordpress
+  wordpress:
+    image: wordpress:latest
+    ports:
+      - 80:80
+    restart: always
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=wordpress
+      - WORDPRESS_DB_NAME=wordpress
+volumes:
+  db_data:
+
+
+--> sudo docker-compose up -d - Initially I had a go at running this locally on with Docker Compose:
+--> sudo docker ps -a - Then I can get the list of running containers by using below command
+
+
+
