@@ -1,0 +1,82 @@
+Install git
+ 
+--> sudo yum -y install git
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Install Java
+
+--> sudo yum -y install java-<version> (java* for all versions)
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+Install jenkins 
+
+--> sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo - Add the Jenkins repo using the following command
+--> sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key - import a key file from Jenkins-CI to enable installation from the packag
+--> sudo yum upgrade - to update packages (if needed)
+--> sudo yum -y install jenkins
+--> sudo systemctl start jenkins - Start Jenkins as a service:
+--> sudo systemctl enable jenkins - Enable the Jenkins service to start at boot
+--> sudo systemctl status jenkins - You can check the status of the Jenkins service using the command:
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+    
+Install docker
+
+--> sudo yum -y install docker - To install docker
+--> sudo usermod -a -G docker ec2-user - Give the permission to add a limited Linux user account to the "docker" group by using below command
+--> sudo service docker start - Start docker service by using below command
+--> sudo chkconfig docker on - Run below command to get docker service up automatically after reboot:
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Install Docker Compose
+
+--> sudo curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose 
+      (Download the latest version of Docker Compose)
+
+--> sudo chmod +x /usr/local/bin/docker-compose - Apply executable permissions to the binary
+--> sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose - Create a symbolic link
+--> sudo docker-compose -–version - Check installed docker-compose version
+
+
+
+Creating WordPress setup for Docker images with help of YAML scripting
+
+--> sudo vi docker-compose.yml - Here, we have to create docker-compose.yaml file to pull images from docker hub
+
+docker-compose.yml file content
+
+
+version: '3.3'
+services:
+  db:
+    image: mysql:8.0.19
+    command: '--default-authentication-plugin=mysql_native_password'
+    restart: always
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=somewordpress
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=wordpress
+      - MYSQL_PASSWORD=wordpress
+  wordpress:
+    image: wordpress:latest
+    ports:
+      - 80:80
+    restart: always
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=wordpress
+      - WORDPRESS_DB_NAME=wordpress
+volumes:
+  db_data:
+
+
+--> sudo docker-compose up -d - Initially I had a go at running this locally on with Docker Compose:
+--> sudo docker ps -a - Then I can get the list of running containers by using below command
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------
